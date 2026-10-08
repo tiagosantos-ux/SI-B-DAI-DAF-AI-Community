@@ -1,0 +1,34 @@
+---
+name: dbt-backend
+description: Use when working on backend development, DBT transformations, Snowflake models, or business logic. This skill provides context for the dbt_repo folder containing all DBT + Snowflake development.
+applyTo:
+  - dbt_repo/**
+---
+
+# DBT Backend Development
+
+## Repository Structure
+This skill applies to `dbt_repo/` — the backend data transformation layer using DBT and Snowflake.
+
+## Key Information
+- **Technology Stack**: DBT (Data Build Tool), Snowflake SQL, Python
+- **Purpose**: Data transformations, model definitions, staging, intermediate, and mart layers
+- **Location**: `/dbt_repo/`
+
+## When to Use This Skill
+- Writing or debugging DBT models (`.sql` files)
+- Understanding data lineage or model dependencies
+- Snowflake schema and transformation logic questions
+- Business logic at the data layer
+- DBT configuration, macros, or testing
+
+## Development Tips
+- DBT models are typically organized in `models/` folder
+- Staging models: `stg_` prefix (raw → cleaned)
+- Intermediate models: `int_` prefix
+- Mart models: business-ready tables for analytics
+- Tests are defined in `tests/` or as properties in YAML
+
+## Related Repositories
+- **Frontend**: See `power_bi_repo/` for Power BI reports consuming these models
+- **Tests**: See `automated_tests_repo/` for validation against this backend
