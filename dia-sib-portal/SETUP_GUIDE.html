@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIA SI B Knowledge Base Portal — Setup Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #009999;
+    --teal-dark: #007a7a;
+    --teal-light: #e0f5f5;
+    --teal-mid: #b2e0e0;
+    --text: #1a1a2e;
+    --text-muted: #555;
+    --text-faint: #888;
+    --bg: #f5f6fa;
+    --white: #ffffff;
+    --border: #e2e4ea;
+    --code-bg: #1e2235;
+    --code-text: #e2e8f0;
+    --warn-bg: #fff8e1;
+    --warn-border: #f9a825;
+    --success-bg: #e8f5e9;
+    --success-border: #43a047;
+    --info-bg: #e3f2fd;
+    --info-border: #1e88e5;
+    --step-num: #009999;
+    --red: #e53935;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, #007a7a 0%, #009999 60%, #00b3b3 100%);
+    color: white;
+    padding: 48px 40px 40px;
+    text-align: center;
+  }
+  .site-header .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .site-header .logo-icon {
+    background: rgba(255,255,255,.2);
+    border-radius: 14px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .site-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -.5px;
+  }
+  .site-header p {
+    font-size: 1.05rem;
+    opacity: .85;
+    max-width: 560px;
+    margin: 10px auto 0;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 20px 32px 24px;
+    border-right: 1px solid var(--border);
+    background: var(--white);
+  }
+  .sidebar h3 {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .sidebar h3:first-child { margin-top: 0; }
+  .sidebar ul { list-style: none; }
+  .sidebar li { margin-bottom: 2px; }
+  .sidebar a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: .85rem;
+    transition: background .15s, color .15s;
+  }
+  .sidebar a:hover { background: var(--teal-light); color: var(--teal-dark); }
+  .sidebar a.active { background: var(--teal-light); color: var(--teal); font-weight: 600; }
+  .sidebar .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    font-size: .65rem;
+    font-weight: 700;
+    margin-right: 7px;
+    flex-shrink: 0;
+  }
+
+  /* ── Main content ── */
+  .content {
+    padding: 48px 48px 80px;
+    min-width: 0;
+  }
+
+  /* ── Sections ── */
+  section {
+    margin-bottom: 56px;
+    scroll-margin-top: 24px;
+  }
+  .section-label {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  section > h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--teal-light);
+    color: var(--text);
+  }
+  section > p, section > ul, section > ol {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  section ul, section ol {
+    padding-left: 22px;
+  }
+  section li { margin-bottom: 6px; }
+
+  /* ── Step cards ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0 20px;
+    position: relative;
+  }
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 23px;
+    top: 48px;
+    bottom: 0;
+    width: 2px;
+    background: var(--teal-mid);
+  }
+  .step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0,153,153,.3);
+  }
+  .step-body {
+    padding-bottom: 36px;
+  }
+  .step-body h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-top: 10px;
+    color: var(--text);
+  }
+  .step-body p, .step-body ul, .step-body ol {
+    color: var(--text-muted);
+    font-size: .93rem;
+    margin-bottom: 10px;
+  }
+  .step-body ul, .step-body ol { padding-left: 20px; }
+  .step-body li { margin-bottom: 5px; }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15);
+  }
+  .code-header {
+    background: rgba(255,255,255,.07);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .code-lang {
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: rgba(255,255,255,.45);
+  }
+  .copy-btn {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.15);
+    color: rgba(255,255,255,.6);
+    border-radius: 5px;
+    padding: 3px 10px;
+    font-size: .72rem;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,.2); color: white; }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+  pre {
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    font-size: .85rem;
+    line-height: 1.65;
+    color: var(--code-text);
+  }
+  code {
+    background: #eef0f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: .85em;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    color: #c0392b;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+  /* Syntax coloring */
+  .k { color: #c792ea; }  /* keyword */
+  .s { color: #c3e88d; }  /* string */
+  .c { color: #546e7a; font-style: italic; } /* comment */
+  .n { color: #82aaff; }  /* name */
+  .v { color: #f78c6c; }  /* value */
+  .p { color: #89ddff; }  /* punctuation */
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 14px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: .9rem;
+  }
+  .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: 4px; font-size: .95rem; }
+  .callout-body p, .callout-body ul { margin: 0; color: inherit; }
+  .callout-body ul { padding-left: 18px; margin-top: 6px; }
+  .callout-body li { margin-bottom: 3px; }
+  .callout.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #5d4037; }
+  .callout.info { background: var(--info-bg); border: 1px solid var(--info-border); color: #0d47a1; }
+  .callout.success { background: var(--success-bg); border: 1px solid var(--success-border); color: #1b5e20; }
+  .callout.tip { background: #f3e5f5; border: 1px solid #9c27b0; color: #4a148c; }
+
+  /* ── File tree ── */
+  .file-tree {
+    background: var(--code-bg);
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    font-size: .83rem;
+    color: var(--code-text);
+    line-height: 1.9;
+    margin: 12px 0;
+  }
+  .file-tree .folder { color: #82aaff; }
+  .file-tree .file { color: #c3e88d; }
+  .file-tree .comment { color: #546e7a; font-style: italic; }
+  .file-tree .required { color: #f78c6c; }
+
+  /* ── Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: .88rem;
+  }
+  th {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbff; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: .75rem;
+    font-weight: 600;
+  }
+  .tag.required { background: #fde8e8; color: var(--red); }
+  .tag.optional { background: #e8f5e9; color: #388e3c; }
+  .tag.auto { background: #e3f2fd; color: #1565c0; }
+
+  /* ── Checklist ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    font-size: .9rem;
+    color: var(--text-muted);
+    background: var(--white);
+    border: 1px solid var(--border);
+  }
+  .checklist li input[type=checkbox] {
+    margin-top: 2px;
+    accent-color: var(--teal);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .checklist li label { cursor: pointer; }
+
+  /* ── Architecture diagram ── */
+  .arch-diagram {
+    background: var(--code-bg);
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    font-size: .82rem;
+    color: var(--code-text);
+    line-height: 2;
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+  .arch-diagram .box { color: #82aaff; }
+  .arch-diagram .arrow { color: #89ddff; }
+  .arch-diagram .label { color: #c3e88d; font-style: italic; }
+  .arch-diagram .label2 { color: #f78c6c; font-style: italic; }
+
+  /* ── OS tabs ── */
+  .os-tabs { display: flex; gap: 4px; margin-bottom: -1px; }
+  .os-tab {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: #f0f1f6;
+    color: var(--text-faint);
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: .83rem;
+    font-weight: 600;
+    transition: background .15s, color .15s;
+  }
+  .os-tab.active { background: var(--code-bg); color: white; }
+  .os-panel { display: none; }
+  .os-panel.active { display: block; }
+  .os-panel .code-block { border-radius: 0 10px 10px 10px; }
+
+  /* ── Screenshot placeholder ── */
+  .screenshot {
+    border: 2px dashed var(--teal-mid);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    color: var(--teal);
+    margin: 14px 0;
+    background: var(--teal-light);
+  }
+  .screenshot .sc-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .screenshot p { font-size: .88rem; color: var(--text-muted); margin: 0; }
+
+  /* ── FAQ accordion ── */
+  details {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  summary {
+    padding: 14px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: .93rem;
+    color: var(--text);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before {
+    content: '›';
+    display: inline-block;
+    font-size: 1.1rem;
+    color: var(--teal);
+    transition: transform .2s;
+    width: 14px;
+    flex-shrink: 0;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { background: var(--teal-light); }
+  .details-body {
+    padding: 16px 18px;
+    color: var(--text-muted);
+    font-size: .9rem;
+    border-top: 1px solid var(--border);
+    background: #fafbff;
+  }
+  .details-body p { margin-bottom: 10px; }
+  .details-body p:last-child { margin-bottom: 0; }
+  .details-body ul { padding-left: 18px; }
+  .details-body li { margin-bottom: 5px; }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 32px;
+    font-size: .8rem;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    margin-top: 40px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .content { padding: 28px 20px; }
+    .site-header { padding: 32px 20px; }
+    .site-header h1 { font-size: 1.5rem; }
+  }
+
+  /* Print */
+  @media print {
+    .sidebar { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    .content { padding: 20px; }
+    .code-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HEADER -->
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+        <path d="M5 15h20M15 5v20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="text-align:left">
+      <div style="font-size:.8rem;opacity:.7;letter-spacing:.5px;margin-bottom:2px">SIEMENS · DIA SI B</div>
+      <div style="font-size:1.4rem;font-weight:700">Knowledge Base Portal</div>
+    </div>
+  </div>
+  <p>Complete setup guide — from installation to first answer. Estimated time: <strong>10–15 minutes</strong>.</p>
+  <div class="badge-row">
+    <span class="badge">Python 3.10+</span>
+    <span class="badge">Windows / Mac / Linux</span>
+    <span class="badge">Siemens SDC Gateway</span>
+    <span class="badge">Confluence SIDCRSS</span>
+    <span class="badge">No cloud account needed</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ LAYOUT -->
+<div class="layout">
+
+<!-- ─────────────────────── SIDEBAR ────────────────────────────── -->
+<nav class="sidebar">
+  <h3>Overview</h3>
+  <ul>
+    <li><a href="#architecture">How it works</a></li>
+    <li><a href="#prereqs">Prerequisites</a></li>
+  </ul>
+  <h3>Setup Steps</h3>
+  <ul>
+    <li><a href="#step1"><span class="step-num">1</span>Get the files</a></li>
+    <li><a href="#step2"><span class="step-num">2</span>Install Python</a></li>
+    <li><a href="#step3"><span class="step-num">3</span>Install packages</a></li>
+    <li><a href="#step4"><span class="step-num">4</span>Get your Confluence token</a></li>
+    <li><a href="#step5"><span class="step-num">5</span>Create the .env file</a></li>
+    <li><a href="#step6"><span class="step-num">6</span>Start the server</a></li>
+    <li><a href="#step7"><span class="step-num">7</span>Open the portal</a></li>
+  </ul>
+  <h3>Reference</h3>
+  <ul>
+    <li><a href="#files">File reference</a></li>
+    <li><a href="#sharing">Sharing with the team</a></li>
+    <li><a href="#faq">Troubleshooting / FAQ</a></li>
+  </ul>
+</nav>
+
+<!-- ─────────────────────── MAIN CONTENT ────────────────────────── -->
+<main class="content">
+
+<!-- ═══ ARCHITECTURE ══════════════════════════════════════════════ -->
+<section id="architecture">
+  <div class="section-label">Overview</div>
+  <h2>How the Portal Works</h2>
+  <p>The portal is a lightweight local web application. When you ask a question, it searches the team's Confluence space, retrieves the most relevant pages, sends them as context to Claude (via the Siemens SDC LLM Gateway), and streams the answer back to your browser — in real time.</p>
+  <p><strong>Nothing is sent to the public internet.</strong> Both the LLM Gateway (<code>llm.sdc.siemens.cloud</code>) and Confluence (<code>wiki.si.siemens.cloud</code>) are internal Siemens infrastructure.</p>
+
+  <div class="arch-diagram">
+<span class="box">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="box">│                    Your Browser (localhost:8000)                 │</span>
+<span class="box">└──────────────────┬───────────────────────────────────────────────┘</span>
+                   <span class="arrow">│  POST /ask  (your question)</span>
+                   <span class="arrow">▼</span>
+<span class="box">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="box">│               Python FastAPI Server  (app.py)                    │</span>
+<span class="box">│                                                                  │</span>
+<span class="box">│   1. CQL search  ──────────────────────────────────────────────► │</span>
+<span class="box">│                                           wiki.si.siemens.cloud  │</span>
+<span class="box">│   2. Fetch page content  ◄──────────────────────────────────────  │</span>
+<span class="box">│                                                                  │</span>
+<span class="box">│   3. Build prompt (question + context) ────────────────────────► │</span>
+<span class="box">│                                          llm.sdc.siemens.cloud   │</span>
+<span class="box">│   4. Stream response tokens  ◄──────────────────────────────────  │</span>
+<span class="box">└──────────────────┬───────────────────────────────────────────────┘</span>
+                   <span class="arrow">│  SSE token stream</span>
+                   <span class="arrow">▼</span>
+<span class="box">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="box">│         Answer renders word-by-word in the browser               │</span>
+<span class="box">└──────────────────────────────────────────────────────────────────┘</span>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">🔒</span>
+    <div class="callout-body">
+      <strong>Security note</strong>
+      <p>Each team member uses their own personal Confluence API token. No shared credentials. The server only reads Confluence — it never creates or modifies pages unless explicitly asked.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PREREQUISITES ══════════════════════════════════════════════ -->
+<section id="prereqs">
+  <div class="section-label">Before you start</div>
+  <h2>Prerequisites</h2>
+  <p>Check that you have the following before starting:</p>
+
+  <table>
+    <thead><tr><th>Requirement</th><th>Minimum version</th><th>Where to get it</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Python</strong></td>
+        <td>3.10 or newer</td>
+        <td>Ask your IT team or download from python.org</td>
+        <td><span class="tag required">Required</span></td>
+      </tr>
+      <tr>
+        <td><strong>pip</strong> (Python package manager)</td>
+        <td>Comes with Python</td>
+        <td>Installed automatically with Python</td>
+        <td><span class="tag auto">Auto</span></td>
+      </tr>
+      <tr>
+        <td><strong>Internet access</strong> (internal Siemens)</td>
+        <td>—</td>
+        <td>Must be on Siemens network or VPN</td>
+        <td><span class="tag required">Required</span></td>
+      </tr>
+      <tr>
+        <td><strong>Confluence account</strong></td>
+        <td>—</td>
+        <td>Your normal Siemens login — access to SIDCRSS space</td>
+        <td><span class="tag required">Required</span></td>
+      </tr>
+      <tr>
+        <td><strong>SDC API key</strong></td>
+        <td>—</td>
+        <td>Provided by your team lead (same key used by Claude Code)</td>
+        <td><span class="tag required">Required</span></td>
+      </tr>
+      <tr>
+        <td><strong>Terminal / Command Prompt</strong></td>
+        <td>—</td>
+        <td>PowerShell, CMD, or bash — any works</td>
+        <td><span class="tag required">Required</span></td>
+      </tr>
+      <tr>
+        <td><strong>A modern browser</strong></td>
+        <td>Chrome / Edge / Firefox</td>
+        <td>Already installed on your machine</td>
+        <td><span class="tag auto">Auto</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ STEP 1 ══════════════════════════════════════════════════════ -->
+<section id="step1">
+  <div class="section-label">Setup Steps</div>
+  <h2>Step-by-Step Installation</h2>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-circle">1</div>
+      <div class="step-body">
+        <h3>Get the Portal Files</h3>
+        <p>You need two files: <code>app.py</code> (the server) and this guide. Request them from your team lead or download from the shared team location.</p>
+
+        <p><strong>Option A — Copy from a colleague's machine</strong><br>
+        Copy the <code>dia-sib-portal</code> folder to your machine. Place it anywhere convenient, for example:</p>
+
+        <div class="os-tabs">
+          <button class="os-tab active" onclick="switchOS(this,'win1')">Windows</button>
+          <button class="os-tab" onclick="switchOS(this,'mac1')">Mac / Linux</button>
+        </div>
+        <div id="win1" class="os-panel active">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">target folder</span></div>
+            <pre>C:\Projects\dia-sib-portal\</pre>
+          </div>
+        </div>
+        <div id="mac1" class="os-panel">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">target folder</span></div>
+            <pre>~/Projects/dia-sib-portal/</pre>
+          </div>
+        </div>
+
+        <p><strong>Option B — Create the folder manually</strong><br>
+        Create a new folder named <code>dia-sib-portal</code> and place <code>app.py</code> inside it.</p>
+
+        <p>After this step, your folder should look like this:</p>
+        <div class="file-tree">
+<span class="folder">📁 dia-sib-portal/</span>
+├── <span class="file required">app.py</span>           <span class="comment">← the server (required)</span>
+├── <span class="file">.env</span>             <span class="comment">← you will create this in Step 5</span>
+└── <span class="file">SETUP_GUIDE.html</span> <span class="comment">← this file</span>
+        </div>
+
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Do not share the <code>.env</code> file</strong>
+            <p>The <code>.env</code> file contains your personal API tokens. Each person creates their own. Never commit it to git or send it via email.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-body">
+        <h3>Verify Python is Installed</h3>
+        <p>Open a terminal and run:</p>
+
+        <div class="os-tabs">
+          <button class="os-tab active" onclick="switchOS(this,'win2')">Windows (PowerShell / CMD)</button>
+          <button class="os-tab" onclick="switchOS(this,'mac2')">Mac / Linux</button>
+        </div>
+        <div id="win2" class="os-panel active">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">powershell</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>python --version</pre>
+          </div>
+        </div>
+        <div id="mac2" class="os-panel">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">terminal</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>python3 --version</pre>
+          </div>
+        </div>
+
+        <p>You should see something like <code>Python 3.11.4</code>. Any version <strong>3.10 or newer</strong> works.</p>
+
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Python not found?</strong>
+            <ul>
+              <li>On Windows: try <code>py --version</code> or <code>python3 --version</code></li>
+              <li>If none work, contact your IT team to install Python, or download it from <strong>python.org/downloads</strong></li>
+              <li>During installation, tick <strong>"Add Python to PATH"</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <p>Note down the exact command that works for you (<code>python</code>, <code>python3</code>, or <code>py</code>). You will use it in the next steps.</p>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-body">
+        <h3>Install Required Packages</h3>
+        <p>Open a terminal, navigate to the <code>dia-sib-portal</code> folder, and run the install command:</p>
+
+        <div class="os-tabs">
+          <button class="os-tab active" onclick="switchOS(this,'win3')">Windows</button>
+          <button class="os-tab" onclick="switchOS(this,'mac3')">Mac / Linux</button>
+        </div>
+        <div id="win3" class="os-panel active">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">powershell</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><span class="c"># Navigate to the folder first</span>
+cd C:\Projects\dia-sib-portal
+
+<span class="c"># Install all required packages</span>
+pip install fastapi uvicorn httpx python-multipart</pre>
+          </div>
+        </div>
+        <div id="mac3" class="os-panel">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">terminal</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><span class="c"># Navigate to the folder first</span>
+cd ~/Projects/dia-sib-portal
+
+<span class="c"># Install all required packages</span>
+pip3 install fastapi uvicorn httpx python-multipart</pre>
+          </div>
+        </div>
+
+        <p>This will download and install 4 small packages. It takes about 30–60 seconds. You should see <code>Successfully installed ...</code> at the end.</p>
+
+        <table>
+          <thead><tr><th>Package</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>fastapi</code></td><td>The web framework that powers the server</td></tr>
+            <tr><td><code>uvicorn</code></td><td>Runs the FastAPI server</td></tr>
+            <tr><td><code>httpx</code></td><td>Makes HTTP requests to Confluence and Claude</td></tr>
+            <tr><td><code>python-multipart</code></td><td>Handles form data from the browser</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-body">
+            <strong>Corporate proxy issues?</strong>
+            <p>If pip fails with a connection error, your corporate proxy may be blocking it. Try:</p>
+            <div class="code-block" style="margin-top:8px">
+              <div class="code-header"><span class="code-lang">powershell</span></div>
+              <pre>pip install fastapi uvicorn httpx python-multipart --trusted-host pypi.org --trusted-host files.pythonhosted.org</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" id="step4">
+      <div class="step-circle">4</div>
+      <div class="step-body">
+        <h3>Get Your Personal Confluence API Token</h3>
+        <p>The portal reads Confluence pages on your behalf. For this, it needs a personal API token — think of it as a password specifically for API access. <strong>This is not your Siemens password.</strong></p>
+
+        <p><strong>Follow these steps in your browser:</strong></p>
+        <ol>
+          <li>Log in to Confluence: <code>https://wiki.si.siemens.cloud</code></li>
+          <li>Click your <strong>profile picture</strong> (top right corner)</li>
+          <li>Select <strong>"Profile"</strong> from the dropdown menu</li>
+          <li>In your profile page, click <strong>"Personal Access Tokens"</strong> in the left sidebar<br>
+              <em>(If you don't see it, try: Profile → Settings → Personal Access Tokens)</em></li>
+          <li>Click <strong>"Create token"</strong></li>
+          <li>Fill in:
+            <ul>
+              <li><strong>Token name:</strong> <code>DIA SI B Portal</code> (or any name you prefer)</li>
+              <li><strong>Expiry:</strong> Set to 1 year, or leave as default</li>
+            </ul>
+          </li>
+          <li>Click <strong>"Create"</strong></li>
+          <li><strong>Copy the token immediately</strong> — it is only shown once</li>
+        </ol>
+
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Save the token now — you cannot see it again</strong>
+            <p>Once you close the token creation screen, Confluence will not show the token value again. If you lose it, you need to create a new one. Copy it to a temporary notepad before the next step.</p>
+          </div>
+        </div>
+
+        <div class="callout success">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <strong>No special permissions needed</strong>
+            <p>The token inherits your normal Confluence permissions. If you can read pages in the SIDCRSS space through the browser, the token can read them too.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step" id="step5">
+      <div class="step-circle">5</div>
+      <div class="step-body">
+        <h3>Create Your <code>.env</code> Configuration File</h3>
+        <p>The portal reads its configuration from a file called <code>.env</code> inside the <code>dia-sib-portal</code> folder. This file stores your personal tokens — it stays on your machine and is never shared.</p>
+
+        <p><strong>Create the file using any text editor (Notepad, VS Code, etc.)</strong></p>
+
+        <p>Create a new file named exactly <code>.env</code> (with a dot at the start, no extension) in the <code>dia-sib-portal</code> folder, with the following content:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">.env  (your configuration file)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><span class="c"># Confluence connection</span>
+CONF_BASE_URL=<span class="s">https://wiki.si.siemens.cloud</span>
+CONF_TOKEN=<span class="v">PASTE_YOUR_CONFLUENCE_TOKEN_HERE</span>
+
+<span class="c"># Siemens SDC LLM Gateway (Claude)</span>
+<span class="c"># Ask your team lead for this key</span>
+ANTHROPIC_API_KEY=<span class="v">PASTE_YOUR_SDC_API_KEY_HERE</span>
+ANTHROPIC_BASE_URL=<span class="s">https://llm.sdc.siemens.cloud</span></pre>
+        </div>
+
+        <p>Replace <code>PASTE_YOUR_CONFLUENCE_TOKEN_HERE</code> with the token from Step 4, and <code>PASTE_YOUR_SDC_API_KEY_HERE</code> with the key provided by your team lead.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-body">
+            <strong>Creating a file that starts with a dot on Windows</strong>
+            <ul>
+              <li>Open Notepad, paste the content, then go to <strong>File → Save As</strong></li>
+              <li>In the filename box, type <code>.env</code> (with the dot)</li>
+              <li>Change "Save as type" to <strong>All Files (*.*)</strong></li>
+              <li>Navigate to the <code>dia-sib-portal</code> folder and click Save</li>
+            </ul>
+          </div>
+        </div>
+
+        <p>Your folder should now look like this:</p>
+        <div class="file-tree">
+<span class="folder">📁 dia-sib-portal/</span>
+├── <span class="file required">app.py</span>
+├── <span class="file required">.env</span>           <span class="comment">← just created ✓</span>
+└── <span class="file">SETUP_GUIDE.html</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step" id="step6">
+      <div class="step-circle">6</div>
+      <div class="step-body">
+        <h3>Start the Server</h3>
+        <p>Open a terminal, navigate to the <code>dia-sib-portal</code> folder, and run:</p>
+
+        <div class="os-tabs">
+          <button class="os-tab active" onclick="switchOS(this,'win6')">Windows</button>
+          <button class="os-tab" onclick="switchOS(this,'mac6')">Mac / Linux</button>
+        </div>
+        <div id="win6" class="os-panel active">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">powershell / cmd</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>cd C:\Projects\dia-sib-portal
+python -m uvicorn app:app --host 0.0.0.0 --port 8000</pre>
+          </div>
+        </div>
+        <div id="mac6" class="os-panel">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">terminal</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>cd ~/Projects/dia-sib-portal
+python3 -m uvicorn app:app --host 0.0.0.0 --port 8000</pre>
+          </div>
+        </div>
+
+        <p>You should see output like this — which means the server is running:</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">expected output</span></div>
+          <pre>INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)</pre>
+        </div>
+
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Keep this terminal window open</strong>
+            <p>The server runs as long as this terminal window stays open. If you close it, the portal stops. To stop the server intentionally, press <strong>Ctrl + C</strong> in the terminal.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <strong>Tip: run in background (optional)</strong>
+            <p>If you want the server to keep running after closing the terminal, on Windows you can use:</p>
+            <div class="code-block" style="margin-top:8px">
+              <div class="code-header"><span class="code-lang">powershell</span></div>
+              <pre>Start-Process python -ArgumentList "-m uvicorn app:app --host 0.0.0.0 --port 8000" -WorkingDirectory "C:\Projects\dia-sib-portal" -WindowStyle Hidden</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step" id="step7">
+      <div class="step-circle">7</div>
+      <div class="step-body">
+        <h3>Open the Portal in Your Browser</h3>
+        <p>With the server running, open your browser and go to:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">browser address bar</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre>http://localhost:8000</pre>
+        </div>
+
+        <p>You should see the DIA SI B Knowledge Base portal with a search box and suggested questions. Try clicking one of the suggestion chips or typing your own question.</p>
+
+        <div class="callout success">
+          <span class="callout-icon">🎉</span>
+          <div class="callout-body">
+            <strong>You're set up!</strong>
+            <p>If you see the portal and can ask a question that returns an answer with sources from Confluence — everything is working correctly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /steps -->
+</section>
+
+<!-- ═══ FILE REFERENCE ══════════════════════════════════════════════ -->
+<section id="files">
+  <div class="section-label">Reference</div>
+  <h2>File Reference</h2>
+  <p>Here is what each file does and whether you need to touch it:</p>
+
+  <table>
+    <thead><tr><th>File</th><th>Purpose</th><th>Edit it?</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>app.py</code></td>
+        <td>The server: handles routing, Confluence search, Claude API calls, HTML interface</td>
+        <td>No — unless you are customising the portal</td>
+      </tr>
+      <tr>
+        <td><code>.env</code></td>
+        <td>Your personal credentials: Confluence token, SDC API key</td>
+        <td>Yes — you create this in Step 5</td>
+      </tr>
+      <tr>
+        <td><code>SETUP_GUIDE.html</code></td>
+        <td>This document</td>
+        <td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:24px;margin-bottom:10px;font-size:1rem">.env variables explained</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Value</th><th>Who provides it</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>CONF_BASE_URL</code></td>
+        <td><code>https://wiki.si.siemens.cloud</code> (fixed — do not change)</td>
+        <td>Pre-filled in this guide</td>
+      </tr>
+      <tr>
+        <td><code>CONF_TOKEN</code></td>
+        <td>Your personal Confluence API token (created in Step 4)</td>
+        <td>You generate it yourself</td>
+      </tr>
+      <tr>
+        <td><code>ANTHROPIC_API_KEY</code></td>
+        <td>The Siemens SDC Gateway API key</td>
+        <td>Your team lead</td>
+      </tr>
+      <tr>
+        <td><code>ANTHROPIC_BASE_URL</code></td>
+        <td><code>https://llm.sdc.siemens.cloud</code> (fixed — do not change)</td>
+        <td>Pre-filled in this guide</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ SHARING ══════════════════════════════════════════════════════ -->
+<section id="sharing">
+  <div class="section-label">Team collaboration</div>
+  <h2>Sharing the Portal with the Team</h2>
+
+  <p>There are three ways to share the portal, depending on your situation:</p>
+
+  <details open>
+    <summary>Option A — Everyone runs their own local copy (simplest)</summary>
+    <div class="details-body">
+      <p>The simplest approach. Each team member installs the portal on their own machine following this guide. The portal runs on <code>localhost:8000</code> — only they can access it.</p>
+      <p><strong>What to share with each person:</strong></p>
+      <ul>
+        <li><code>app.py</code> — the server file</li>
+        <li><code>SETUP_GUIDE.html</code> — this guide</li>
+        <li>The SDC API key (provided by team lead via secure channel)</li>
+      </ul>
+      <p><strong>What each person creates themselves:</strong></p>
+      <ul>
+        <li>Their own <code>.env</code> file with their own Confluence token</li>
+      </ul>
+      <p><strong>Pros:</strong> No shared server to maintain. Each person controls their own setup. Works offline (on local network).</p>
+      <p><strong>Cons:</strong> Everyone needs to install Python and packages. Each person needs their own Confluence token.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Option B — One shared server on a team machine or VM</summary>
+    <div class="details-body">
+      <p>One person installs and runs the server on a machine accessible to the whole team (e.g., a shared Windows VM, a team server). Everyone connects to that one URL instead of running it locally.</p>
+      <p><strong>Setup on the shared machine:</strong> Follow Steps 1–6 of this guide on the shared machine. Then team members open the portal at:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">browser</span></div>
+        <pre>http://&lt;shared-machine-ip-or-hostname&gt;:8000</pre>
+      </div>
+      <p><strong>Find the shared machine's IP on Windows:</strong></p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">powershell</span></div>
+        <pre>ipconfig | findstr "IPv4"</pre>
+      </div>
+      <p>Example: if the result is <code>192.168.1.45</code>, team members go to <code>http://192.168.1.45:8000</code>.</p>
+      <p><strong>Important:</strong> Both machines must be on the same network (or VPN). The server machine's firewall must allow inbound connections on port 8000.</p>
+      <p><strong>Pros:</strong> Team members only need a browser — no Python installation required.</p>
+      <p><strong>Cons:</strong> The shared machine must stay on. The Confluence token in <code>.env</code> is shared (one account reads on behalf of everyone).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Option C — Deploy to an internal server for permanent access (advanced)</summary>
+    <div class="details-body">
+      <p>For a permanent, always-on solution accessible from any device on the Siemens network, deploy the portal to a Siemens-approved server or Azure App Service (internal).</p>
+      <p>This option requires IT involvement and is beyond the scope of this guide. The application itself is ready — it only needs a host. Contact your IT team with these details:</p>
+      <ul>
+        <li>Runtime: <strong>Python 3.10+</strong></li>
+        <li>Command: <code>python -m uvicorn app:app --host 0.0.0.0 --port 8000</code></li>
+        <li>Environment variables: 4 variables as documented above</li>
+        <li>Outbound access needed: <code>wiki.si.siemens.cloud</code> and <code>llm.sdc.siemens.cloud</code> (both internal)</li>
+        <li>No database, no file storage, no external dependencies</li>
+      </ul>
+    </div>
+  </details>
+
+  <h3 style="margin-top:28px;margin-bottom:12px;font-size:1rem">Onboarding checklist for a new team member</h3>
+  <p>Use this checklist when helping a colleague get set up:</p>
+  <ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">Python 3.10+ is installed on their machine</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">They received <code>app.py</code> and this guide</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">They ran <code>pip install fastapi uvicorn httpx python-multipart</code> successfully</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">They created their own Confluence API token (Step 4)</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">They received the SDC API key from the team lead</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">They created the <code>.env</code> file with their own tokens</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Server starts without errors (<code>Application startup complete</code>)</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">They can open the portal and get an answer to a test question</label></li>
+  </ul>
+</section>
+
+<!-- ═══ FAQ ══════════════════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="section-label">Reference</div>
+  <h2>Troubleshooting &amp; FAQ</h2>
+
+  <details>
+    <summary>The server starts but the answer says "No relevant pages found in Confluence"</summary>
+    <div class="details-body">
+      <p>This means the portal connected to the server, but the Confluence search returned no results. Possible causes:</p>
+      <ul>
+        <li><strong>Wrong or expired Confluence token</strong> — Open your <code>.env</code> file and check that <code>CONF_TOKEN</code> has the correct value. If unsure, regenerate it in Confluence (Step 4) and update the file, then restart the server.</li>
+        <li><strong>Not on the Siemens network</strong> — You must be on the Siemens VPN or internal network to reach <code>wiki.si.siemens.cloud</code>.</li>
+        <li><strong>The topic isn't documented in Confluence</strong> — Try a different, broader question. Not all topics may be documented yet.</li>
+        <li><strong>CONF_BASE_URL is wrong</strong> — It must be exactly <code>https://wiki.si.siemens.cloud</code> with no trailing slash.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>I get "Address already in use" when starting the server</summary>
+    <div class="details-body">
+      <p>Another process is already using port 8000. Options:</p>
+      <ul>
+        <li>Find and stop the other process that's using port 8000, or</li>
+        <li>Run the portal on a different port by adding <code>--port 8001</code> (or any other free port) to the start command, then open <code>http://localhost:8001</code></li>
+      </ul>
+      <p>On Windows, to find what's using port 8000:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">powershell</span></div>
+        <pre>netstat -ano | findstr :8000</pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>I get "ModuleNotFoundError: No module named 'fastapi'" (or similar)</summary>
+    <div class="details-body">
+      <p>The packages were installed for a different Python version than the one running the server. Make sure you use the same <code>python</code> command to both install packages and start the server.</p>
+      <p>For example, if you installed with <code>python3 -m pip install ...</code>, start the server with <code>python3 -m uvicorn ...</code>.</p>
+      <p>Alternatively, install packages explicitly for the Python you will use:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">terminal</span></div>
+        <pre>python -m pip install fastapi uvicorn httpx python-multipart</pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>pip install fails with a connection error or SSL error</summary>
+    <div class="details-body">
+      <p>Your corporate proxy is likely blocking pip. Try:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">terminal</span></div>
+        <pre>pip install fastapi uvicorn httpx python-multipart --trusted-host pypi.org --trusted-host files.pythonhosted.org</pre>
+      </div>
+      <p>If that still fails, ask your IT team for the proxy configuration, or request them to install the packages for you.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The portal loads but Claude's answer is an error or empty</summary>
+    <div class="details-body">
+      <p>The issue is likely with the SDC API key. Check that:</p>
+      <ul>
+        <li><code>ANTHROPIC_API_KEY</code> in your <code>.env</code> has the correct value (no extra spaces or line breaks)</li>
+        <li><code>ANTHROPIC_BASE_URL</code> is exactly <code>https://llm.sdc.siemens.cloud</code></li>
+        <li>You are connected to the Siemens network or VPN</li>
+      </ul>
+      <p>Ask your team lead to confirm you have the correct API key.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I stop the server?</summary>
+    <div class="details-body">
+      <p>In the terminal where the server is running, press <strong>Ctrl + C</strong>. The server will stop immediately.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Can I use the portal on my phone or tablet?</summary>
+    <div class="details-body">
+      <p>Yes, if you are using Option B (shared server). Connect your phone/tablet to the same network and open <code>http://&lt;server-ip&gt;:8000</code> in the browser. The interface is responsive and works on mobile.</p>
+      <p>For Option A (local), the portal only runs on your own machine.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>My Confluence token expired — how do I renew it?</summary>
+    <div class="details-body">
+      <ol>
+        <li>Log in to <code>https://wiki.si.siemens.cloud</code></li>
+        <li>Go to your Profile → Personal Access Tokens</li>
+        <li>Create a new token (you can delete the old one)</li>
+        <li>Update the <code>CONF_TOKEN</code> value in your <code>.env</code> file</li>
+        <li>Restart the server (Ctrl+C, then run the start command again)</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>Can I ask questions about topics outside of Confluence?</summary>
+    <div class="details-body">
+      <p>The portal is designed to answer questions grounded in the team's Confluence documentation. If a topic isn't documented there, the portal will tell you it couldn't find relevant information and suggest alternative places to look (e.g., JIRA, team contacts).</p>
+      <p>It will not make up answers — all responses are based on content found in Confluence.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Is my data private? What gets sent where?</summary>
+    <div class="details-body">
+      <p>Here is exactly what leaves your machine when you ask a question:</p>
+      <ul>
+        <li><strong>To <code>wiki.si.siemens.cloud</code></strong> — a search query (the keywords from your question) and a request to read specific pages. This is the same as searching Confluence normally.</li>
+        <li><strong>To <code>llm.sdc.siemens.cloud</code></strong> — your question and the text of the Confluence pages retrieved. This goes to the Siemens-internal SDC LLM Gateway, not to any public Anthropic servers.</li>
+      </ul>
+      <p><strong>Nothing is sent to the public internet.</strong> Both endpoints are internal Siemens infrastructure subject to Siemens data governance policies.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>How do I keep the portal always running on startup (Windows)?</summary>
+    <div class="details-body">
+      <p>You can add the server as a Windows startup task. The simplest way is to create a batch file and add it to the Windows startup folder:</p>
+      <p>1. Create a file named <code>start-portal.bat</code> in the <code>dia-sib-portal</code> folder:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">start-portal.bat</span></div>
+        <pre>@echo off
+cd /d C:\Projects\dia-sib-portal
+python -m uvicorn app:app --host 0.0.0.0 --port 8000</pre>
+      </div>
+      <p>2. Press <strong>Win + R</strong>, type <code>shell:startup</code>, press Enter</p>
+      <p>3. Place a shortcut to <code>start-portal.bat</code> in that folder</p>
+      <p>The server will start automatically when Windows starts.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ═══ QUICK REFERENCE CARD ════════════════════════════════════════ -->
+<section>
+  <div class="section-label">Quick Reference</div>
+  <h2>Quick Reference Card</h2>
+  <p>Print or bookmark this for daily use:</p>
+
+  <div style="background:var(--white);border:2px solid var(--teal-mid);border-radius:14px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div>
+      <p style="font-weight:700;margin-bottom:10px;color:var(--teal)">Start the portal</p>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><span class="code-lang">terminal</span></div>
+        <pre>cd dia-sib-portal
+python -m uvicorn app:app --host 0.0.0.0 --port 8000</pre>
+      </div>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:10px;color:var(--teal)">Open the portal</p>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><span class="code-lang">browser</span></div>
+        <pre>http://localhost:8000</pre>
+      </div>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:10px;color:var(--teal)">Stop the portal</p>
+      <p style="color:var(--text-muted);font-size:.9rem">Press <strong>Ctrl + C</strong> in the terminal window</p>
+    </div>
+    <div>
+      <p style="font-weight:700;margin-bottom:10px;color:var(--teal)">If something breaks</p>
+      <p style="color:var(--text-muted);font-size:.9rem">Stop (Ctrl+C), check your <code>.env</code> file, restart. See FAQ above.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  DIA SI B · Knowledge Base Portal · Internal use only · All data sourced from Confluence (SIDCRSS) and processed by Siemens SDC LLM Gateway
+</footer>
+
+<script>
+  // ── OS tab switcher ──────────────────────────────────────────────
+  function switchOS(btn, panelId) {
+    const tabGroup = btn.parentElement;
+    const contentParent = tabGroup.parentElement;
+
+    tabGroup.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    contentParent.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  // ── Copy button ──────────────────────────────────────────────────
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // ── Sidebar active link on scroll ────────────────────────────────
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ── Smooth scroll ────────────────────────────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
